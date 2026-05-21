@@ -1,0 +1,88 @@
+<div class="min-h-screen bg-gray-100">
+  <!-- Navbar -->
+  <div class="navbar bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+    <div class="flex-1">
+      <button (click)="goBack()" class="btn btn-ghost btn-sm">
+        ← Back to Dashboard
+      </button>
+      <a class="btn btn-ghost normal-case text-xl ml-2">
+        🅿️ Parking Slots Map
+      </a>
+    </div>
+    <div class="flex-none">
+      <button (click)="logout()" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </div>
+  
+  <div class="container mx-auto p-6">
+    <!-- Legend -->
+    <div class="flex gap-6 mb-8 justify-center flex-wrap">
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 bg-green-500 rounded-full shadow-md"></div>
+        <span class="font-semibold">Available</span>
+        <span class="text-sm text-gray-500">- Click to park</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 bg-red-500 rounded-full shadow-md"></div>
+        <span class="font-semibold">Occupied</span>
+        <span class="text-sm text-gray-500">- Click to exit</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 bg-yellow-500 rounded-full shadow-md"></div>
+        <span class="font-semibold">Reserved</span>
+        <span class="text-sm text-gray-500">- Unavailable</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 bg-gray-500 rounded-full shadow-md"></div>
+        <span class="font-semibold">Maintenance</span>
+        <span class="text-sm text-gray-500">- Under service</span>
+      </div>
+    </div>
+    
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+      <span class="loading loading-spinner loading-lg text-primary"></span>
+    </div>
+    
+    <!-- Slots Grid -->
+    <div *ngIf="!isLoading && slots.length > 0">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <div *ngFor="let slot of slots" 
+             class="card shadow-xl cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+             [class.bg-gradient-to-br]="true"
+             [class.from-green-400]="slot.status === 'Available'"
+             [class.to-green-600]="slot.status === 'Available'"
+             [class.from-red-400]="slot.status === 'Occupied'"
+             [class.to-red-600]="slot.status === 'Occupied'"
+             [class.from-yellow-400]="slot.status === 'Reserved'"
+             [class.to-yellow-600]="slot.status === 'Reserved'"
+             [class.from-gray-400]="slot.status === 'Maintenance'"
+             [class.to-gray-600]="slot.status === 'Maintenance'"
+             (click)="onSlotClick(slot)">
+          <div class="card-body p-4 text-center text-white">
+            <h3 class="card-title justify-center text-2xl font-bold">{{ slot.slotNumber }}</h3>
+            <div class="badge badge-lg mt-2 bg-white/20 text-white border-none">
+              {{ slot.status }}
+            </div>
+            <div *ngIf="slot.currentVehicleNumber" class="mt-3">
+              <div class="text-xs opacity-90">Vehicle</div>
+              <div class="text-sm font-mono font-bold">{{ slot.currentVehicleNumber }}</div>
+            </div>
+            <div *ngIf="slot.occupiedSince" class="mt-2">
+              <div class="text-xs opacity-75">Since</div>
+              <div class="text-xs">{{ slot.occupiedSince | date:'shortTime' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && slots.length === 0" class="text-center py-16">
+      <div class="text-6xl mb-4">🅿️</div>
+      <h3 class="text-2xl font-semibold mb-2">No Parking Slots Found</h3>
+      <p class="text-gray-500 mb-6">Please initialize parking slots using the backend API</p>
+      <button class="btn btn-primary" (click)="initializeSlots()">Initialize Slots</button>
+    </div>
+  </div>
+</div>

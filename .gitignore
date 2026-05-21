@@ -1,0 +1,43 @@
+# .NET build outputs
+**/bin/
+**/obj/
+**/out/
+**/Debug/
+**/Release/
+
+# Database files
+**/*.db
+**/*.db-shm
+**/*.db-wal
+
+# Angular
+**/node_modules/
+**/.angular/
+**/dist/
+**/tmp/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build results
+**/SmartParking.API
+**/*.dll
+**/*.pdb
+**/*.exe
+
+# Logs
+**/*.log
+**/*.txt
+
+# Environment / secrets
+**/appsettings.Development.json
+*.secrets.json

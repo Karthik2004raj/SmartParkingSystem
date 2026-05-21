@@ -1,0 +1,78 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-800 flex items-center justify-center p-6">
+  <div class="card w-full max-w-md bg-white/10 backdrop-blur-lg shadow-2xl border border-white/20">
+    <div class="card-body">
+      <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center gap-2">
+          <div class="text-3xl">🚗</div>
+          <h2 class="card-title text-2xl text-white">Vehicle Entry</h2>
+        </div>
+        <button (click)="goBack()" class="btn btn-ghost btn-sm text-white">✕</button>
+      </div>
+      <p class="text-gray-300 mb-4">Register a vehicle entering the parking facility</p>
+      
+      <div *ngIf="selectedSlotNumber" class="alert alert-info mb-4 bg-blue-500/50 border-blue-400 text-white">
+        <div class="flex items-center gap-2">
+          <span>📍</span>
+          <span>Selected Slot: <strong class="text-lg">{{ selectedSlotNumber }}</strong></span>
+        </div>
+      </div>
+      
+      <form (ngSubmit)="onSubmit()" class="space-y-4">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text text-white">Vehicle Number</span>
+          </label>
+          <div class="relative">
+            <span class="absolute left-3 top-3 text-gray-400">🚙</span>
+            <input 
+              type="text" 
+              [(ngModel)]="vehicleNumber" 
+              name="vehicleNumber"
+              class="input input-bordered w-full pl-10 bg-white/20 border-white/30 text-white placeholder:text-gray-400" 
+              required
+              placeholder="e.g., KA01AB1234"
+              autocomplete="off">
+          </div>
+        </div>
+        
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text text-white">Select Parking Slot</span>
+          </label>
+          <select [(ngModel)]="selectedSlotId" name="slotId" class="select select-bordered w-full bg-white/20 border-white/30 text-white" required>
+            <option value="" class="text-gray-800">Choose a slot</option>
+            <option *ngFor="let slot of availableSlots" [value]="slot.slotId" class="text-gray-800">
+              Slot {{ slot.slotNumber }} (Zone {{ slot.zoneName }})
+            </option>
+          </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary w-full mt-6" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Register Entry</span>
+          <span *ngIf="isLoading">Processing...</span>
+        </button>
+        
+        <div *ngIf="errorMessage" class="alert alert-error mt-4">
+          <span>{{ errorMessage }}</span>
+        </div>
+        
+        <div *ngIf="successMessage" class="alert alert-success mt-4">
+          <span>✓ {{ successMessage }}</span>
+        </div>
+      </form>
+      
+      <div class="divider text-gray-400">Available Slots ({{ availableSlots.length }})</div>
+      <div class="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
+        <div *ngFor="let slot of availableSlots" 
+             class="badge badge-lg cursor-pointer hover:badge-primary transition-all duration-200"
+             [class.badge-primary]="selectedSlotId === slot.slotId"
+             (click)="selectSlot(slot)">
+          {{ slot.slotNumber }}
+        </div>
+        <div *ngIf="availableSlots.length === 0" class="text-center w-full text-gray-400 py-4">
+          No available slots at the moment
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,135 @@
+<div class="min-h-screen bg-gray-100">
+  <!-- Navbar -->
+  <div class="navbar bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+    <div class="flex-1">
+      <a class="btn btn-ghost normal-case text-xl">
+        🚗 Smart Parking System
+      </a>
+    </div>
+    <div class="flex-none gap-2">
+      <div class="dropdown dropdown-end">
+        <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+          <div class="w-10 rounded-full bg-white/20 flex items-center justify-center">
+            <span class="text-lg font-bold">{{ username.charAt(0).toUpperCase() }}</span>
+          </div>
+        </label>
+        <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-white rounded-box w-52 text-gray-800">
+          <li><span class="font-semibold">{{ username }}</span></li>
+          <li><span class="text-sm text-gray-500">{{ role }}</span></li>
+          <li><div class="divider my-0"></div></li>
+          <li><a (click)="logout()" class="text-red-600">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container mx-auto p-6">
+    <!-- Welcome Banner -->
+    <div class="hero bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl mb-8 shadow-lg">
+      <div class="hero-content text-center text-white py-8">
+        <div>
+          <h1 class="text-3xl font-bold">Welcome back, {{ username }}! 👋</h1>
+          <p class="mt-2">Here's what's happening with your parking facility today</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="stats shadow-lg bg-white">
+        <div class="stat">
+          <div class="stat-figure text-blue-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+          </div>
+          <div class="stat-title">Total Slots</div>
+          <div class="stat-value text-blue-600">{{ stats.totalSlots || 0 }}</div>
+        </div>
+      </div>
+      
+      <div class="stats shadow-lg bg-white">
+        <div class="stat">
+          <div class="stat-figure text-orange-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="stat-title">Occupied</div>
+          <div class="stat-value text-orange-600">{{ stats.occupiedSlots || 0 }}</div>
+        </div>
+      </div>
+      
+      <div class="stats shadow-lg bg-white">
+        <div class="stat">
+          <div class="stat-figure text-green-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div class="stat-title">Available</div>
+          <div class="stat-value text-green-600">{{ stats.availableSlots || 0 }}</div>
+        </div>
+      </div>
+      
+      <div class="stats shadow-lg bg-white">
+        <div class="stat">
+          <div class="stat-figure text-purple-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <div class="stat-title">Utilization</div>
+          <div class="stat-value text-purple-600">{{ stats.utilizationPercentage || 0 | number:'1.0-0' }}%</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- AI Prediction Card -->
+    <div class="card bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-xl mb-8">
+      <div class="card-body">
+        <div class="flex items-center gap-3">
+          <span class="text-4xl">��</span>
+          <h2 class="card-title text-2xl">AI Prediction Engine</h2>
+        </div>
+        <p>Based on historical data and current trends, we predict:</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="bg-white/20 rounded-lg p-4">
+            <p class="text-sm opacity-90">Next Hour Occupancy</p>
+            <p class="text-3xl font-bold">{{ stats.predictedNextHourOccupancy || 0 }} / {{ stats.totalSlots || 0 }} slots</p>
+            <progress class="progress progress-warning w-full mt-2" [value]="(stats.predictedNextHourOccupancy / (stats.totalSlots || 1)) * 100" max="100"></progress>
+          </div>
+          <div class="bg-white/20 rounded-lg p-4">
+            <p class="text-sm opacity-90">Current Congestion Level</p>
+            <p class="text-3xl font-bold">{{ stats.congestionLevel || 'Normal' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="card bg-white shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer hover:scale-105" (click)="goToSlots()">
+        <div class="card-body items-center text-center">
+          <div class="text-5xl mb-2">🅿️</div>
+          <h2 class="card-title text-xl">View Parking Slots</h2>
+          <p class="text-gray-600">See all parking slots and their real-time status</p>
+          <div class="card-actions justify-end mt-4">
+            <button class="btn btn-primary btn-sm">View Details →</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card bg-white shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer hover:scale-105" (click)="goToVehicleEntry()">
+        <div class="card-body items-center text-center">
+          <div class="text-5xl mb-2">🚗</div>
+          <h2 class="card-title text-xl">Vehicle Entry</h2>
+          <p class="text-gray-600">Register a new vehicle entering the parking facility</p>
+          <div class="card-actions justify-end mt-4">
+            <button class="btn btn-secondary btn-sm">Register Entry →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

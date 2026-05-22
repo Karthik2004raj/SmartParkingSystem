@@ -1,0 +1,76 @@
+Smart Parking Utilization System –
+Abstract Project Documentation
+1. Project Overview
+Goal: Reduce parking search time and congestion using real-time occupancy
+tracking and AI-based prediction.
+Tech Stack: .NET 10 (C#), Angular, SQLite/MySQL, JWT authentication,
+Tailwind CSS + DaisyUI.
+2. Problem Statement
+
+Drivers waste time finding empty slots.
+No real-time visibility of parking utilization.
+No prediction of future occupancy or peak hours.
+Administrators lack automated alerts and utilization reports.
+3. Features (Functional Scope)
+
+User login with roles (Admin, Operator, Viewer).
+Real-time dashboard (total/occupied/available slots, AI prediction).
+Parking slot management (view, initialize, colour‑coded status).
+Vehicle entry/exit tracking with transaction history.
+AI prediction based on historical occupancy.
+Alerts for high occupancy (>80% warning, >90% critical).
+4. System Architecture (High‑Level)
+
+Frontend: Angular – communicates via REST API.
+Backend: ASP .NET Core Web API – handles business logic and
+authentication.
+Database: SQLite (development) / MS SQL (production).
+Authentication: JWT – token stored in frontend, validated by middleware.
+5. Design
+
+Layered Architecture: Controllers → Services → DbContext → Database.
+Dependency Injection: Services injected into controllers; DbContext per
+request.
+DTOs: Separate data contracts for API (hide internal fields).
+Async/Await: All I/O operations non‑blocking.
+6. Module Design
+
+Auth Module: Login, JWT generation, password hashing (BCrypt).
+Parking Module: Occupancy logic, slot management, entry/exit.
+Prediction Module: Weighted regression (current + last 3h avg + historical
+avg).
+Reporting Module (partial): Daily/weekly trends, zone usage.
+Frontend Modules: Login, Dashboard, Slots, Vehicle Entry, Reports.
+7. API Design
+
+RESTful endpoints: /api/auth/login, /api/parking/dashboard,
+/api/parking/slots, /api/parking/entry, /api/parking/exit/{id},
+/api/parking/init-slots.
+Input/Output: JSON.
+Authentication: Bearer token for all protected endpoints.
+8. Data Flow
+  1. User logs in → Backend validates credentials → Returns JWT.
+  2. Frontend stores token → Includes it in every request header.
+  3. Backend validates token via middleware → Controller processes request.
+  4. Service uses Entity Framework to query/update SQLite database.
+  5. Response returned as JSON → Frontend updates UI.
+  6. Dashboard auto‑refreshes every 30 seconds.
+9. Error Handling
+
+Global exception middleware catches unhandled exceptions → returns
+consistent error JSON.
+Validation errors return 400 with details.
+Authentication failures return 401.
+Empty history in prediction falls back to current occupancy (defensive check).
+Frontend shows user‑friendly messages for network or server errors.
+10. Assumptions & Limitations
+Assumptions:
+
+Drivers are not direct users; operators/administrators manage the system.
+Parking slots are fixed (no dynamic resizing).
+Predictions use simple weighted formula until enough historical data is
+collected.
+Limitations:
+No real‑time hardware sensors (manual entry/exit).
+No email/SMS alerts (only dashboard notifications).
+Prediction accuracy improves over time as occupancy history grows.

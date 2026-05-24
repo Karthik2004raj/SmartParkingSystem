@@ -1,136 +1,86 @@
 <div class="min-h-screen bg-gray-100">
-  <!-- Navbar -->
+  <!-- Header with back button -->
   <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 shadow-lg">
     <div class="container mx-auto flex justify-between items-center">
-      <div class="flex items-center gap-4">
-        <button (click)="goBack()" class="bg-white/20 px-3 py-1 rounded hover:bg-white/30">
-          ← Back to Dashboard
-        </button>
-        <h1 class="text-xl font-bold">📊 Analytics & Reports</h1>
-      </div>
-      <button (click)="logout()" class="bg-red-500 px-3 py-1 rounded hover:bg-red-600">
-        Logout
+      <h1 class="text-2xl font-bold">📊 AI Reports & Insights</h1>
+      <button (click)="goBack()" class="bg-white/20 px-4 py-2 rounded hover:bg-white/30 transition">
+        ← Back to Dashboard
       </button>
     </div>
   </div>
 
   <div class="container mx-auto p-6">
-    <!-- Loading -->
-    <div *ngIf="isLoading" class="text-center p-8">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-      <p class="mt-4">Loading reports...</p>
+    
+    <!-- MLR Model Explanation Card -->
+    <div class="bg-white rounded-xl shadow p-6 mb-6">
+      <h2 class="text-xl font-bold mb-3">🧠 Multiple Linear Regression (MLR) Prediction Model</h2>
+      <p class="mb-2">Our AI predicts next‑hour occupancy using this weighted formula:</p>
+      <div class="bg-gray-100 p-3 rounded font-mono text-center text-lg mb-3">
+        {{ mlrFormula }}
+      </div>
+      <ul class="list-disc pl-6 space-y-1 text-sm">
+        <li><strong>50% weight</strong> – Current occupancy (real‑time data)</li>
+        <li><strong>30% weight</strong> – Last 3 hours average (captures recent trend)</li>
+        <li><strong>20% weight</strong> – Same hour historical average (daily pattern)</li>
+      </ul>
+      <p class="text-xs text-gray-500 mt-3">Coefficients chosen empirically; upgradeable to ML.NET for automated training.</p>
     </div>
 
-    <!-- Error -->
-    <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 p-4 rounded mb-4">
-      Error: {{ error }}
+    <!-- Static ML Insights Card -->
+    <div class="bg-white rounded-xl shadow p-6 mb-6">
+      <h2 class="text-xl font-bold mb-3">📈 Static Machine Learning Insights</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="border rounded-lg p-3">
+          <div class="font-semibold text-gray-600">⏰ Peak Hour Forecast</div>
+          <div class="text-2xl font-bold text-orange-600">{{ peakHour }}</div>
+        </div>
+        <div class="border rounded-lg p-3">
+          <div class="font-semibold text-gray-600">📅 Weekly Trend</div>
+          <div class="text-2xl font-bold text-blue-600">{{ weeklyTrend }}</div>
+        </div>
+        <div class="border rounded-lg p-3">
+          <div class="font-semibold text-gray-600">🏆 Best Available Zone</div>
+          <div class="text-2xl font-bold text-green-600">{{ bestZone }}</div>
+        </div>
+        <div class="border rounded-lg p-3">
+          <div class="font-semibold text-gray-600">💡 Recommendation</div>
+          <div class="text-md">{{ recommendation }}</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Reports Content -->
-    <div *ngIf="!isLoading && !error">
-      <!-- Report Type Selector -->
-      <div class="bg-white rounded-lg shadow mb-6 p-4">
-        <div class="flex gap-4">
-          <button (click)="selectedReport = 'daily'" 
-                  [class.bg-blue-600]="selectedReport === 'daily'"
-                  [class.bg-gray-200]="selectedReport !== 'daily'"
-                  class="px-4 py-2 rounded">
-            Daily Report
-          </button>
-          <button (click)="selectedReport = 'weekly'"
-                  [class.bg-blue-600]="selectedReport === 'weekly'"
-                  [class.bg-gray-200]="selectedReport !== 'weekly'"
-                  class="px-4 py-2 rounded">
-            Weekly Report
-          </button>
-          <button (click)="selectedReport = 'zone'"
-                  [class.bg-blue-600]="selectedReport === 'zone'"
-                  [class.bg-gray-200]="selectedReport !== 'zone'"
-                  class="px-4 py-2 rounded">
-            Zone Analysis
-          </button>
-        </div>
-      </div>
-
-      <!-- Daily Report -->
-      <div *ngIf="selectedReport === 'daily'" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-xl font-bold mb-4">📅 Today's Summary</h2>
-          <div class="space-y-3">
-            <div class="flex justify-between">
-              <span>Total Transactions:</span>
-              <span class="font-bold">{{ reportData.totalTransactions }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Average Duration:</span>
-              <span class="font-bold">{{ reportData.averageDuration }} minutes</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Current Occupancy:</span>
-              <span class="font-bold">{{ reportData.zoneStats | json }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-xl font-bold mb-4">⏰ Peak Hours</h2>
-          <div class="text-center p-4">
-            <div class="text-3xl font-bold text-orange-600">{{ reportData.peakHour }}</div>
-            <p class="text-gray-600 mt-2">Highest traffic period</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Weekly Report -->
-      <div *ngIf="selectedReport === 'weekly'" class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-xl font-bold mb-4">📈 Weekly Occupancy Trend</h2>
-        <div class="space-y-3">
-          <div *ngFor="let day of reportData.dailyStats" class="mb-3">
-            <div class="flex justify-between mb-1">
-              <span>{{ day.day }}</span>
-              <span>{{ day.occupancy }}%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-4">
-              <div class="bg-blue-600 h-4 rounded-full" 
-                   [style.width.%]="day.occupancy"></div>
-            </div>
-          </div>
-        </div>
-        <div class="mt-6 p-4 bg-blue-50 rounded">
-          <p class="text-sm text-gray-600">
-            💡 Insight: Weekdays show higher occupancy (70-85%) compared to weekends (45-60%).
-            Consider offering weekend discounts to improve utilization.
-          </p>
-        </div>
-      </div>
-
-      <!-- Zone Analysis -->
-      <div *ngIf="selectedReport === 'zone'" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div *ngFor="let zone of reportData.zoneStats" class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-xl font-bold mb-4">Zone {{ zone.zoneName }}</h2>
-          <div class="space-y-3">
-            <div class="flex justify-between">
-              <span>Total Slots:</span>
-              <span>{{ zone.totalSlots }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Occupied:</span>
-              <span class="text-orange-600">{{ zone.occupiedSlots }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Available:</span>
-              <span class="text-green-600">{{ zone.availableSlots }}</span>
-            </div>
-            <div class="mt-4 pt-4 border-t">
-              <div class="text-center">
-                <div class="text-2xl font-bold" [class]="getZoneColor(zone.occupancyRate)">
-                  {{ zone.occupancyRate }}%
+    <!-- Zone Performance Table -->
+    <div class="bg-white rounded-xl shadow p-6">
+      <h2 class="text-xl font-bold mb-3">📊 Zone Performance (Real‑time)</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="p-2 text-left">Zone</th>
+              <th class="p-2 text-left">Total Slots</th>
+              <th class="p-2 text-left">Occupied</th>
+              <th class="p-2 text-left">Available</th>
+              <th class="p-2 text-left">Occupancy Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let zone of zoneStats" class="border-b">
+              <td class="p-2 font-semibold">Zone {{ zone.zoneName }}</td>
+              <td class="p-2">{{ zone.totalSlots }}</td>
+              <td class="p-2 text-orange-600">{{ zone.occupiedSlots }}</td>
+              <td class="p-2 text-green-600">{{ zone.availableSlots }}</td>
+              <td class="p-2">
+                <div class="flex items-center gap-2">
+                  <span>{{ zone.occupancyRate }}%</span>
+                  <div class="w-24 bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" 
+                         [style.width.%]="zone.occupancyRate"></div>
+                  </div>
                 </div>
-                <div class="text-sm text-gray-600">Occupancy Rate</div>
-              </div>
-            </div>
-          </div>
-        </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

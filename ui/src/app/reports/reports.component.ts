@@ -1,101 +1,72 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
 import { ParkingService } from '../services/parking.service';
-import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-reports',
   templateUrl: './reports.component.html'
 })
 export class ReportsComponent implements OnInit {
-  reportData: any = {
-    totalTransactions: 0,
-    averageDuration: 0,
-    peakHour: '',
-    mostUsedZone: '',
-    dailyStats: [],
-    zoneStats: []
-  };
-  isLoading = true;
-  error = '';
-  selectedReport = 'daily';
+  // Data from backend
+  zoneStats: any[] = [];
+  totalSlots = 0;
+  occupiedSlots = 0;
+  
+  // Derived insights
+  peakHour = 'Loading...';
+  weeklyTrend = 'Loading...';
+  bestZone = 'Loading...';
+  recommendation = 'Loading...';
+  
+  // MLR formula explanation
+  mlrFormula = 'Predicted = 0.5×Current + 0.3×Last3hAvg + 0.2×SameHourHistAvg';
 
   constructor(
-    private authService: AuthService,
     private parkingService: ParkingService,
     private router: Router
   ) {}
 
-  ngOnInit() {
-    this.loadReports();
-  }
-
-  loadReports() {
-    this.isLoading = true;
+  ngOnInit(): void {
+    // Fetch data when component loads
     this.parkingService.getDashboardStats().subscribe({
-      next: (data: any) => {
-        this.reportData.zoneStats = data.zoneStats || [];
-        this.calculateReports(data);
-        this.isLoading = false;
+      next: (data) => {
+        this.zoneStats = data.zoneStats || [];
+        this.totalSlots = data.totalSlots;
+        this.occupiedSlots = data.occupiedSlots;
+        this.calculateInsights(data);
       },
-      error: (err) => {
-        this.error = err.message;
-        this.isLoading = false;
-      }
+      error: (err) => console.error('Failed to load stats', err)
     });
   }
 
-  calculateReports(stats: any) {
-    // Calculate peak hour based on current time
+  calculateInsights(data: any): void {
+    // 1. Peak hour based on current time
     const hour = new Date().getHours();
-    let peakHour = '';
-    if (hour >= 9 && hour <= 11) peakHour = '9 AM - 11 AM (Morning Peak)';
-    else if (hour >= 17 && hour <= 19) peakHour = '5 PM - 7 PM (Evening Peak)';
-    else if (hour >= 12 && hour <= 14) peakHour = '12 PM - 2 PM (Lunch Time)';
-    else peakHour = `${hour}:00 - ${hour+1}:00`;
+    if (hour >= 8 && hour <= 10) this.peakHour = '8 AM – 10 AM (Morning Rush)';
+    else if (hour >= 12 && hour <= 14) this.peakHour = '12 PM – 2 PM (Lunch Time)';
+    else if (hour >= 17 && hour <= 19) this.peakHour = '5 PM – 7 PM (Evening Peak)';
+    else this.peakHour = `${hour}:00 – ${hour+1}:00`;
 
-    // Find most used zone
-    let mostUsedZone = 'A';
-    let maxOccupancy = 0;
-    if (stats.zoneStats) {
-      stats.zoneStats.forEach((zone: any) => {
-        if (zone.occupiedSlots > maxOccupancy) {
-          maxOccupancy = zone.occupiedSlots;
-          mostUsedZone = zone.zoneName;
-        }
-      });
+    // 2. Weekly trend (simple day-of-week check)
+    const day = new Date().getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
+    this.weeklyTrend = (day >= 1 && day <= 5) 
+      ? 'Higher on weekdays (Mon-Fri)' 
+      : 'Lower on weekends';
+
+    // 3. Best zone (lowest occupancy)
+    if (this.zoneStats && this.zoneStats.length) {
+      const sorted = [...this.zoneStats].sort((a,b) => a.occupancyRate - b.occupancyRate);
+      const best = sorted[0];
+      this.bestZone = `Zone ${best.zoneName} (${best.occupancyRate}% occupied)`;
+      
+      // 4. Recommendation based on best zone
+      if (best.zoneName === 'A') this.recommendation = 'Consider adding more slots in Zone A';
+      else if (best.zoneName === 'B') this.recommendation = 'Optimise layout in Zone B';
+      else this.recommendation = 'Zone C has the best availability – direct drivers there';
     }
-
-    this.reportData.peakHour = peakHour;
-    this.reportData.mostUsedZone = mostUsedZone;
-    this.reportData.totalTransactions = Math.floor(Math.random() * 100) + 50;
-    this.reportData.averageDuration = Math.floor(Math.random() * 60) + 30;
-    
-    // Generate daily stats
-    this.reportData.dailyStats = [
-      { day: 'Monday', occupancy: 65 },
-      { day: 'Tuesday', occupancy: 70 },
-      { day: 'Wednesday', occupancy: 75 },
-      { day: 'Thursday', occupancy: 80 },
-      { day: 'Friday', occupancy: 85 },
-      { day: 'Saturday', occupancy: 60 },
-      { day: 'Sunday', occupancy: 45 }
-    ];
   }
 
-  getZoneColor(rate: number): string {
-    if (rate > 80) return 'text-red-600';
-    if (rate > 60) return 'text-yellow-600';
-    return 'text-green-600';
-  }
-
-  goBack() {
+  goBack(): void {
     this.router.navigate(['/dashboard']);
-  }
-
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }

@@ -9,7 +9,7 @@ import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ParkingSlotsComponent } from './parking-slots/parking-slots.component';
 import { VehicleEntryComponent } from './vehicle-entry/vehicle-entry.component';
-import { ReportsComponent } from './reports/reports.component';
+import { ReportsComponent } from './reports/reports.component';   // <-- import
 
 import { AuthGuard } from './guards/auth.guard';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
@@ -20,7 +20,7 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'slots', component: ParkingSlotsComponent, canActivate: [AuthGuard] },
   { path: 'vehicle-entry', component: VehicleEntryComponent, canActivate: [AuthGuard] },
-  { path: 'reports', component: ReportsComponent, canActivate: [AuthGuard] },
+  { path: 'reports', component: ReportsComponent, canActivate: [AuthGuard] },   // <-- new route
   { path: '**', redirectTo: '/dashboard' }
 ];
 
@@ -31,7 +31,7 @@ const routes: Routes = [
     DashboardComponent,
     ParkingSlotsComponent,
     VehicleEntryComponent,
-    ReportsComponent
+    ReportsComponent   // <-- declare component
   ],
   imports: [
     BrowserModule,

@@ -57,4 +57,7 @@ export class DashboardComponent implements OnInit {
   goToVehicleEntry(): void {
     this.router.navigate(['/vehicle-entry']);
   }
+goToReports(): void {
+  this.router.navigate(['/reports']);
+}
 }

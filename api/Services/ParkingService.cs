@@ -186,13 +186,13 @@ namespace SmartParking.API.Services
             
             if (totalSlots == 0) return 0;
             
-            var last3HourAvg = await _context.OccupancyHistories
-                .Where(h => h.RecordedAt >= now.AddHours(-3))
-                .AverageAsync(h => (double)h.OccupiedSlots);
-                
-            var sameHourAvg = await _context.OccupancyHistories
-                .Where(h => h.Hour == currentHour && h.DayOfWeek == currentDayOfWeek)
-                .AverageAsync(h => (double)h.OccupiedSlots);
+           var last3HourAvg = await _context.OccupancyHistories
+    .Where(h => h.RecordedAt >= now.AddHours(-3))
+    .AverageAsync(h => (double?)h.OccupiedSlots) ?? currentOccupancy;
+
+var sameHourAvg = await _context.OccupancyHistories
+    .Where(h => h.Hour == currentHour && h.DayOfWeek == currentDayOfWeek)
+    .AverageAsync(h => (double?)h.OccupiedSlots) ?? currentOccupancy;
                 
             var predicted = (0.5 * currentOccupancy) + 
                            (0.3 * (last3HourAvg > 0 ? last3HourAvg : currentOccupancy)) + 

@@ -1,5 +1,4 @@
 <div class="min-h-screen bg-gray-100">
-  <!-- Header with back button -->
   <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 shadow-lg">
     <div class="container mx-auto flex justify-between items-center">
       <h1 class="text-2xl font-bold">📊 AI Reports & Insights</h1>
@@ -10,7 +9,6 @@
   </div>
 
   <div class="container mx-auto p-6">
-    
     <!-- MLR Model Explanation Card -->
     <div class="bg-white rounded-xl shadow p-6 mb-6">
       <h2 class="text-xl font-bold mb-3">🧠 Multiple Linear Regression (MLR) Prediction Model</h2>
@@ -18,11 +16,13 @@
       <div class="bg-gray-100 p-3 rounded font-mono text-center text-lg mb-3">
         {{ mlrFormula }}
       </div>
-      <ul class="list-disc pl-6 space-y-1 text-sm">
-        <li><strong>50% weight</strong> – Current occupancy (real‑time data)</li>
-        <li><strong>30% weight</strong> – Last 3 hours average (captures recent trend)</li>
-        <li><strong>20% weight</strong> – Same hour historical average (daily pattern)</li>
-      </ul>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <div *ngFor="let coef of mlrCoefficients" class="border rounded p-2">
+          <div class="font-semibold">{{ coef.name }}</div>
+          <div>Weight: <strong>{{ coef.weight * 100 }}%</strong></div>
+          <div class="text-gray-600">{{ coef.reason }}</div>
+        </div>
+      </div>
       <p class="text-xs text-gray-500 mt-3">Coefficients chosen empirically; upgradeable to ML.NET for automated training.</p>
     </div>
 
@@ -46,6 +46,11 @@
           <div class="font-semibold text-gray-600">💡 Recommendation</div>
           <div class="text-md">{{ recommendation }}</div>
         </div>
+      </div>
+      <div class="mt-4 p-3 bg-purple-50 rounded">
+        <div class="font-semibold">🔮 Moving Average Prediction (Next Hour)</div>
+        <div class="text-2xl font-bold">{{ movingAveragePrediction }} / {{ totalSlots }} slots</div>
+        <div class="text-sm text-gray-600">Confidence: {{ confidenceLevel }}</div>
       </div>
     </div>
 
@@ -73,8 +78,7 @@
                 <div class="flex items-center gap-2">
                   <span>{{ zone.occupancyRate }}%</span>
                   <div class="w-24 bg-gray-200 rounded-full h-2">
-                    <div class="bg-blue-600 h-2 rounded-full" 
-                         [style.width.%]="zone.occupancyRate"></div>
+                    <div class="bg-blue-600 h-2 rounded-full" [style.width.%]="zone.occupancyRate"></div>
                   </div>
                 </div>
               </td>

@@ -2,9 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SmartParking.API", "SmartParking.API", "{B066E637-8E81-4F3F-DBE8-375E35700FA3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api", "api", "{D82C56D6-B2CD-F611-9E31-04638F7EC30E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartParking.API", "SmartParking.API\SmartParking.API\SmartParking.API.csproj", "{2F2C79D4-3A83-CFEB-06E6-67AE60A47D5E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartParking.API", "api\SmartParking.API.csproj", "{7CEAC2FC-6534-DF7B-E3BE-C8DA46329D56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,18 +12,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2F2C79D4-3A83-CFEB-06E6-67AE60A47D5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2F2C79D4-3A83-CFEB-06E6-67AE60A47D5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2F2C79D4-3A83-CFEB-06E6-67AE60A47D5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2F2C79D4-3A83-CFEB-06E6-67AE60A47D5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CEAC2FC-6534-DF7B-E3BE-C8DA46329D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CEAC2FC-6534-DF7B-E3BE-C8DA46329D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CEAC2FC-6534-DF7B-E3BE-C8DA46329D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CEAC2FC-6534-DF7B-E3BE-C8DA46329D56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{2F2C79D4-3A83-CFEB-06E6-67AE60A47D5E} = {B066E637-8E81-4F3F-DBE8-375E35700FA3}
+		{7CEAC2FC-6534-DF7B-E3BE-C8DA46329D56} = {D82C56D6-B2CD-F611-9E31-04638F7EC30E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E87F7E6F-3E4F-4790-8CED-7BF112915CC2}
+		SolutionGuid = {C17683FB-61D4-44F5-9F55-3BB484B640DC}
 	EndGlobalSection
 EndGlobal
